@@ -21,7 +21,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> {
                     // We are saying that all requests that start with /candidate/ or /company/
                     // will be allowed without authentication. 
-                    auth.requestMatchers("/candidate/").permitAll().requestMatchers("/company/").permitAll();
+                    auth.requestMatchers("/candidate/").permitAll()
+                            .requestMatchers("/company/").permitAll()
+                            .requestMatchers("/auth/company").permitAll();
                     auth.anyRequest().authenticated();
                 });
         return http.build();
