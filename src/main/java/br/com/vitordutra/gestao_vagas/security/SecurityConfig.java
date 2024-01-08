@@ -15,7 +15,13 @@ public class SecurityConfig {
     // We need to create a bean of type SecurityFilterChain.
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable());
+        http.csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> {
+                    // We are saying that all requests that start with /candidate/ or /company/
+                    // will be allowed without authentication. 
+                    auth.requestMatchers("/candidate/").permitAll().requestMatchers("/company/").permitAll();
+                    auth.anyRequest().authenticated();
+                });
         return http.build();
     }
     
