@@ -1,5 +1,6 @@
 package br.com.vitordutra.gestao_vagas.modules.company.controllers;
 
+import br.com.vitordutra.gestao_vagas.modules.company.dto.CreateJobDTO;
 import br.com.vitordutra.gestao_vagas.modules.company.entities.JobEntity;
 import br.com.vitordutra.gestao_vagas.modules.company.useCases.CreateJobUseCase;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,10 +21,16 @@ public class JobController {
   private CreateJobUseCase createJobUseCase;
 
   @PostMapping("/")
-  public JobEntity create(@Valid @RequestBody JobEntity jobEntity, HttpServletRequest request) {
-    var companyId = request.getAttribute("company_id");
+  public JobEntity create(@Valid @RequestBody CreateJobDTO createJobDTO, HttpServletRequest request) {
+    var companyId = request.getAttribute("company_id").toString();
 
-    jobEntity.setCompanyId(UUID.fromString(companyId.toString()));
+    // jobEntity.setCompanyId(UUID.fromString(companyId.toString()));
+    var jobEntity = JobEntity.builder()
+            .benefits(createJobDTO.getBenefits())
+            .description(createJobDTO.getDescription())
+            .level(createJobDTO.getLevel())
+            .companyId(UUID.fromString(companyId))
+            .build();
 
     return this.createJobUseCase.execute(jobEntity);
   }
