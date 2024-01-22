@@ -17,27 +17,29 @@ public class SecurityConfig {
     private SecurityFilter securityFilter;
 
     // @Bean explanation:
-    // To spring security to understand that we need to overwrite the default configuration, 
-    // that is managed by the Spring Framework. 
+    // To spring security to understand that we need to overwrite the default
+    // configuration,
+    // that is managed by the Spring Framework.
     // We need to create a bean of type SecurityFilterChain.
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> {
                     // We are saying that all requests that start with /candidate/ or /company/
-                    // will be allowed without authentication. 
+                    // will be allowed without authentication.
                     auth.requestMatchers("/candidate/").permitAll()
                             .requestMatchers("/company/").permitAll()
-                            .requestMatchers("/auth/company").permitAll();
+                            .requestMatchers("/auth/company").permitAll()
+                            .requestMatchers("/candidate/auth").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .addFilterBefore(securityFilter, BasicAuthenticationFilter.class);
         return http.build();
     }
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+
 }
