@@ -1,6 +1,7 @@
 package br.com.vitordutra.gestao_vagas.modules.company.useCases;
 
 import br.com.vitordutra.gestao_vagas.modules.company.dto.AuthCompanyDTO;
+import br.com.vitordutra.gestao_vagas.modules.company.dto.AuthCompanyResponseDTO;
 import br.com.vitordutra.gestao_vagas.modules.company.repositories.CompanyRepository;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.naming.AuthenticationException;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Arrays;
 
 @Service
 public class AuthCompanyUseCase {
@@ -21,11 +23,11 @@ public class AuthCompanyUseCase {
 
     @Autowired
     private CompanyRepository companyRepository;
-    
+
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
-    public String execute(AuthCompanyDTO authCompanyDTO) throws AuthenticationException {
+
+    public AuthCompanyResponseDTO execute(AuthCompanyDTO authCompanyDTO) throws AuthenticationException {
         // Verify if the user exists
         // If not, throw an exception
         var company = this.companyRepository
@@ -33,8 +35,7 @@ public class AuthCompanyUseCase {
                 .orElseThrow(
                         () -> {
                             return new UsernameNotFoundException("Company not found");
-                        }
-                );
+                        });
         // Verify if the password is the same as the one in the database
         // If they're not the same: error
         var passwordMatches = this.passwordEncoder.matches(authCompanyDTO.getPassword(), company.getPassword());
@@ -43,12 +44,20 @@ public class AuthCompanyUseCase {
         }
         // If they're the same: generate a token
         Algorithm algorithm = Algorithm.HMAC256(this.secretKey);
+
+        var expiresIn = Instant.now().plus(Duration.ofHours(2));
+
         var token = JWT.create()
                 .withIssuer("javagas")
-                .withExpiresAt(Instant.now().plus(Duration.ofHours(2)))
+                .withExpiresAt(expiresIn)
                 .withSubject(company.getId().toString())
+                .withClaim("roles", Arrays.asList("COMPANY"))
                 .sign(algorithm);
-        return token;
-        
+        var authCompanyResponseDTO = AuthCompanyResponseDTO.builder()
+                .access_token(token)
+                .expires_in(expiresIn.toEpochMilli())
+                .build();
+        return authCompanyResponseDTO;
+
     }
 }
