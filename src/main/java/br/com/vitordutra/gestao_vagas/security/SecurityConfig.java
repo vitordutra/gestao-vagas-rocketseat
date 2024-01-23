@@ -3,6 +3,7 @@ package br.com.vitordutra.gestao_vagas.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,6 +12,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 
 // Configuring Spring Security
 @Configuration
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Autowired
@@ -19,21 +21,14 @@ public class SecurityConfig {
     @Autowired
     private SecurityCandidateFilter securityCandidateFilter;
 
-    // @Bean explanation:
-    // To spring security to understand that we need to overwrite the default
-    // configuration,
-    // that is managed by the Spring Framework.
-    // We need to create a bean of type SecurityFilterChain.
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> {
-                    // We are saying that all requests that start with /candidate/ or /company/
-                    // will be allowed without authentication.
                     auth.requestMatchers("/candidate/").permitAll()
                             .requestMatchers("/company/").permitAll()
-                            .requestMatchers("/candidate/auth").permitAll()
-                            .requestMatchers("/company/auth").permitAll();
+                            .requestMatchers("/company/auth").permitAll()
+                            .requestMatchers("/candidate/auth").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 .addFilterBefore(securityCandidateFilter, BasicAuthenticationFilter.class)
@@ -45,5 +40,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }
