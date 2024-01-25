@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
@@ -70,18 +71,10 @@ public class CandidateController {
     @PreAuthorize("hasRole('CANDIDATE')")
     @Tag(name = "Candidate", description = "Candidate's infomation")
     @Operation(summary = "List all available job positions to the candidate", description = "This endpoint is used to list all available job positions to the candidate based on a filter")
-    @ApiResponses(
-        @ApiResponse(
-            responseCode = "200",
-            content = {
-                @Content(
-                    array = @ArraySchema(
-                        schema = @Schema(implementation = JobEntity.class)
-                    )
-                )
-            }
-        )
-    )
+    @ApiResponses(@ApiResponse(responseCode = "200", content = {
+            @Content(array = @ArraySchema(schema = @Schema(implementation = JobEntity.class)))
+    }))
+    @SecurityRequirement(name = "jwt_auth")
     public List<JobEntity> findJobByFilter(@RequestParam String filter) {
         return this.listAllJobsByFilterUseCase.execute(filter);
     }
