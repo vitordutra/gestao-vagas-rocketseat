@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -22,8 +24,10 @@ public class JobEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Schema(example = "Position for UI/UX Designer")
     private String description;
 
+    @Schema(example = "Gympass, Health Plan")
     private String benefits;
 
     @NotBlank(message = "Esse campo é obrigatório")
