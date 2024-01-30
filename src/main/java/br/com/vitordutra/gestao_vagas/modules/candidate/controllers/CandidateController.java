@@ -1,6 +1,7 @@
 package br.com.vitordutra.gestao_vagas.modules.candidate.controllers;
 
-import br.com.vitordutra.gestao_vagas.exceptions.UserFoundException;
+import br.com.vitordutra.gestao_vagas.modules.candidate.CandidateEntity;
+import br.com.vitordutra.gestao_vagas.modules.candidate.dto.ProfileCandidateResponseDTO;
 import br.com.vitordutra.gestao_vagas.modules.candidate.useCases.CreateCandidateUseCase;
 import br.com.vitordutra.gestao_vagas.modules.candidate.useCases.ListAllJobsByFilterUseCase;
 import br.com.vitordutra.gestao_vagas.modules.candidate.useCases.ProfileCandidateUseCase;
@@ -13,24 +14,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import java.util.List;
-import java.util.UUID;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import br.com.vitordutra.gestao_vagas.modules.candidate.CandidateEntity;
-import br.com.vitordutra.gestao_vagas.modules.candidate.CandidateRepository;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.RequestParam;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/candidate")
@@ -57,6 +49,16 @@ public class CandidateController {
 
     @GetMapping("/")
     @PreAuthorize("hasRole('CANDIDATE')")
+    @Tag(name = "Candidate", description = "Candidate's profile")
+    @Operation(
+            summary = "Get candidate's profile",
+            description = "This endpoint is used to get candidate's profile information")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = ProfileCandidateResponseDTO.class))}),
+            @ApiResponse(responseCode = "400", description = "Candidate not found")
+    }
+    )
+    @SecurityRequirement(name = "jwt_auth")
     public ResponseEntity<Object> get(HttpServletRequest request) {
         var idCandidate = request.getAttribute("candidate_id");
         try {
