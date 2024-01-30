@@ -1,7 +1,5 @@
 package br.com.vitordutra.gestao_vagas.modules.candidate.dto;
 
-import java.util.Date;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthCandidateResponseDTO {
 
-  private String access_token;
-  private Long expires_in;
+    private String access_token;
+    private Long expires_in;
 
 }

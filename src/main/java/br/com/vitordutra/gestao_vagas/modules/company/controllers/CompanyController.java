@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/company")
 public class CompanyController {
-    
+
     @Autowired
     private CreateCompanyUseCase createCompanyUseCase;
-    
+
     @PostMapping("/")
     public ResponseEntity<Object> create(@Valid @RequestBody CompanyEntity companyEntity) {
         try {

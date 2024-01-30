@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CreateCompanyUseCase {
-    
+
     @Autowired
     private CompanyRepository companyRepository;
-    
+
     @Autowired
     private PasswordEncoder passwordEncoder;
-    
+
     public CompanyEntity execute(CompanyEntity companyEntity) {
         this.companyRepository
                 .findByUsernameOrEmail(companyEntity.getUsername(), companyEntity.getEmail())
@@ -26,5 +26,5 @@ public class CreateCompanyUseCase {
         companyEntity.setPassword(password);
         return this.companyRepository.save(companyEntity);
     }
-  
+
 }
