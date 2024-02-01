@@ -26,6 +26,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/candidate")
+@Tag(name = "Candidate", description = "Candidate's infomation")
 public class CandidateController {
 
     @Autowired
@@ -38,6 +39,12 @@ public class CandidateController {
     private ListAllJobsByFilterUseCase listAllJobsByFilterUseCase;
 
     @PostMapping("/")
+    @Operation(summary = "Candidate sign up", description = "This endpoint is used to create a new candidate")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = CandidateEntity.class))}),
+            @ApiResponse(responseCode = "400", description = "Candidate not found")
+    }
+    )
     public ResponseEntity<Object> create(@Valid @RequestBody CandidateEntity candidateEntity) {
         try {
             var result = this.createCandidateUseCase.execute(candidateEntity);
@@ -49,13 +56,12 @@ public class CandidateController {
 
     @GetMapping("/")
     @PreAuthorize("hasRole('CANDIDATE')")
-    @Tag(name = "Candidate", description = "Candidate's profile")
     @Operation(
             summary = "Get candidate's profile",
             description = "This endpoint is used to get candidate's profile information")
     @ApiResponses({
             @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = ProfileCandidateResponseDTO.class))}),
-            @ApiResponse(responseCode = "400", description = "Candidate not found")
+            @ApiResponse(responseCode = "400", description = "User already exists")
     }
     )
     @SecurityRequirement(name = "jwt_auth")
@@ -71,7 +77,6 @@ public class CandidateController {
 
     @GetMapping("/job")
     @PreAuthorize("hasRole('CANDIDATE')")
-    @Tag(name = "Candidate", description = "Candidate's infomation")
     @Operation(summary = "List all available job positions to the candidate", description = "This endpoint is used to list all available job positions to the candidate based on a filter")
     @ApiResponses(@ApiResponse(responseCode = "200", content = {
             @Content(array = @ArraySchema(schema = @Schema(implementation = JobEntity.class)))
