@@ -22,13 +22,11 @@ public class ApplyJobCandidateUseCase {
     // Id da vaga
     public void execute(UUID candidateId, UUID jobId) {
         // Validar se o candidato existe
-        this.candidateRepository.findById(candidateId).orElseThrow(() -> {
-            throw new UserNotFoundException();
-        });
+        this.candidateRepository.findById(candidateId)
+                .orElseThrow(() -> new UserNotFoundException());
         // Validar se a vaga existe
-        this.jobRepository.findById(jobId).orElseThrow(() -> {
-            throw new JobNotFoundException();
-        });
+        this.jobRepository.findById(jobId)
+                .orElseThrow(() -> new JobNotFoundException());
         // Candidato se inscreve na vaga
     }
 
