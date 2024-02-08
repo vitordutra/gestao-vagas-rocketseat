@@ -3,6 +3,7 @@ package br.com.vitordutra.gestao_vagas.modules.candidate.useCases;
 import br.com.vitordutra.gestao_vagas.exceptions.JobNotFoundException;
 import br.com.vitordutra.gestao_vagas.exceptions.UserNotFoundException;
 import br.com.vitordutra.gestao_vagas.modules.candidate.CandidateRepository;
+import br.com.vitordutra.gestao_vagas.modules.candidate.entity.ApplyJobEntity;
 import br.com.vitordutra.gestao_vagas.modules.candidate.repository.ApplyJobRepository;
 import br.com.vitordutra.gestao_vagas.modules.company.repositories.JobRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,7 @@ public class ApplyJobCandidateUseCase {
 
     // Id do candidato
     // Id da vaga
-    public void execute(UUID candidateId, UUID jobId) {
+    public ApplyJobEntity execute(UUID candidateId, UUID jobId) {
         // Validar se o candidato existe
         this.candidateRepository.findById(candidateId)
                 .orElseThrow(() -> new UserNotFoundException());
@@ -32,6 +33,14 @@ public class ApplyJobCandidateUseCase {
         this.jobRepository.findById(jobId)
                 .orElseThrow(() -> new JobNotFoundException());
         // Candidato se inscreve na vaga
+        var applyJob = ApplyJobEntity.builder()
+                .candidateId(candidateId)
+                .jobId(jobId)
+                .build();
+
+        applyJob = applyJobRepository.save(applyJob);
+
+        return applyJob;
     }
 
 }
