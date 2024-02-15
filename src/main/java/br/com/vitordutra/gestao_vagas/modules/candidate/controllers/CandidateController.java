@@ -2,6 +2,7 @@ package br.com.vitordutra.gestao_vagas.modules.candidate.controllers;
 
 import br.com.vitordutra.gestao_vagas.modules.candidate.CandidateEntity;
 import br.com.vitordutra.gestao_vagas.modules.candidate.dto.ProfileCandidateResponseDTO;
+import br.com.vitordutra.gestao_vagas.modules.candidate.useCases.ApplyJobCandidateUseCase;
 import br.com.vitordutra.gestao_vagas.modules.candidate.useCases.CreateCandidateUseCase;
 import br.com.vitordutra.gestao_vagas.modules.candidate.useCases.ListAllJobsByFilterUseCase;
 import br.com.vitordutra.gestao_vagas.modules.candidate.useCases.ProfileCandidateUseCase;
@@ -37,6 +38,9 @@ public class CandidateController {
 
     @Autowired
     private ListAllJobsByFilterUseCase listAllJobsByFilterUseCase;
+
+    @Autowired
+    private ApplyJobCandidateUseCase applyJobCandidateUseCase;
 
     @PostMapping("/")
     @Operation(summary = "Candidate sign up", description = "This endpoint is used to create a new candidate")
@@ -84,6 +88,20 @@ public class CandidateController {
     @SecurityRequirement(name = "jwt_auth")
     public List<JobEntity> findJobByFilter(@RequestParam String filter) {
         return this.listAllJobsByFilterUseCase.execute(filter);
+    }
+
+    @PostMapping("/job/apply")
+    @PreAuthorize("hasRole('CANDIDATE')")
+    @Operation(summary = "Candidate's application to a job position", description = "This endpoint is used by a candidate to apply for a job position")
+    @SecurityRequirement(name = "jwt_auth")
+    public ResponseEntity<Object> applyJob(HttpServletRequest request, @RequestBody UUID jobId) {
+        var candidateId = request.getAttribute("candidate_id");
+        try {
+            var result = this.applyJobCandidateUseCase.execute(UUID.fromString(candidateId.toString()), jobId);
+            return ResponseEntity.ok().body(result);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
 }
