@@ -10,11 +10,11 @@ services:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
       - POSTGRES_DB=gestao_vagas
-  sonarqube:
-    image: sonarqube:9.9.0-community
-    container_name: gestao_vagas_sonarqube
-    environment:
-      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
-    ports:
-      - "9000:9000"
-    restart: always
+#  sonarqube:
+#    image: sonarqube:9.9.0-community
+#    container_name: gestao_vagas_sonarqube
+#    environment:
+#      - SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true
+#    ports:
+#      - "9001:9000"
+#    restart: always
