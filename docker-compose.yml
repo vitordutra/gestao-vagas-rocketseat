@@ -6,6 +6,7 @@ networks:
 
 volumes:
   prometheus_data:
+  grafana_data:
 
 services:
   postgres:
@@ -29,6 +30,14 @@ services:
       - postgres
     networks:
       - gv-network
+  grafana:
+    container_name: gestao_vagas_grafana
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000
+    networks:
+      - gv-network
+
 #  sonarqube:
 #    image: sonarqube:9.9.0-community
 #    container_name: gestao_vagas_sonarqube
